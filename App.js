@@ -10,17 +10,33 @@ export default class App extends React.Component {
       'squat': 0,
       'deadlift': 0,
       'bench': 0,
+      'total': ''
     }
   }
 
+  calculator = (number) => {
+    return Math.round(Number(number) * (1 / 0.6));
+  }
+
   updateTotal = () => {
-    console.log(this.state);
+    /* Grab a copy of state */
+    const numbers = {...this.state};
+    console.log(numbers);
+
+    /* Calculate your 'number' based on 60% of 1 rep max */
+    const total =
+    this.calculator(numbers.squat) + this.calculator(numbers.deadlift) + this.calculator(numbers.bench);
+
+    /* Set the total */
+    this.setState({total});
+
   }
 
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.title}>THE ROAD TO 1000</Text>
+        <Text style={styles.subtitle}>Enter your 5x5 number:</Text>
           <TextInput
             style={styles.input}
             onChangeText={(text) => this.setState({'squat': text})}
@@ -45,6 +61,8 @@ export default class App extends React.Component {
             placeholderTextColor='black'
             keyboardType='numeric'
           />
+        <Text style={styles.total}>YOUR GRAND TOTAL IS: </Text>
+        <Text style={styles.subtitle}>{this.state.total} </Text>
       </View>
     );
   }
@@ -52,8 +70,19 @@ export default class App extends React.Component {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 36,
-    fontWeight: 'bold'
+    fontSize: 40,
+    fontWeight: '900',
+    padding: 20
+  },
+  subtitle: {
+    fontSize: 28,
+    fontWeight: "500"
+  },
+  total: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    paddingTop: 50,
+    padding: 20
   },
   input: {
     width: '80%',
