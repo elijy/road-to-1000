@@ -14,36 +14,10 @@ export default class App extends React.Component {
       'total': ''
     }
 
-    /* GOTTA FIGURE OUT THIS SECTION */
-
-    /* Grab the total from storage */
-    AsyncStorage.getItem('total')
-      .then(value => {
-        if(value !== null) this.setState({'total': value })
-      });
-
-    /* Grab the total from storage */
-    AsyncStorage.getItem('squat')
-      .then(value => {
-        if(value !== null) this.setState({'squat': value })
-      });
-
-    /* Grab the total from storage */
-    AsyncStorage.getItem('deadlift')
-      .then(value => {
-        if(value !== null) this.setState({'deadlift': value })
-      });
-    /* Grab the total from storage */
-    AsyncStorage.getItem('bench')
-      .then(value => {
-        if(value !== null) this.setState({'bench': value })
-      });
-
   }
 
   /* This function is used to set values into persistant storage and state */
   setValue = (key, value) => {
-    console.log(this.state);
 
     /* First set it into state */
     this.setState({
@@ -53,6 +27,26 @@ export default class App extends React.Component {
     /* Then add it to persistant storage */
     try {
       AsyncStorage.setItem(key, value.toString());
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  /* This function is used to get values from storage and set them into state */
+  getValue = (key) => {
+
+    try {
+
+      /* Check storage  */
+      AsyncStorage.getItem(key)
+        .then(value => {
+
+          /* If we got something back set it into state */
+          if(value !== null) this.setState({
+            [key]: value
+          })
+        });
+
     } catch (error) {
       console.log(error);
     }
@@ -69,14 +63,20 @@ export default class App extends React.Component {
     const numbers = {...this.state};
 
     /* Calculate your 'number' based on 87% of 1 rep max */
-    const total =
-    (this.calculator(numbers.squat) + this.calculator(numbers.deadlift) + this.calculator(numbers.bench)).toString();
+    const total = (this.calculator(numbers.squat) + this.calculator(numbers.deadlift) + this.calculator(numbers.bench)).toString();
 
     /* Set the total */
     this.setState({total});
 
     /* Set the total in storage */
     this.setValue('total', total);
+
+  }
+
+  componentDidMount = () => {
+
+    /* Load all our values from storage by looping over the values in state (hopefully this isnt a problem later on)*/
+    Object.keys(this.state).forEach( key => this.getValue(key));
 
   }
 
